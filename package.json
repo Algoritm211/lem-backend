@@ -6,6 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "dev": "nodemon src/index.js",
+    "lint:eslint": "npx eslint --ext .js .",
+    "editorconfig": "editorconfig-checker",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -23,6 +25,7 @@
     "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
+    "editorconfig-checker": "^4.0.2",
     "eslint": "^7.26.0",
     "eslint-config-google": "^0.14.0",
     "jsonwebtoken": "^8.5.1"

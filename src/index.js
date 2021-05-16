@@ -1,11 +1,11 @@
 const express = require('express')
-const cors = require("cors");
-const consola = require("consola");
+const cors = require('cors')
+const consola = require('consola')
 const dotenv = require('dotenv')
 dotenv.config()
-const cookieParser = require( "cookie-parser");
-const mongoose = require("mongoose");
-const passport = require("passport");
+const cookieParser = require( 'cookie-parser')
+const mongoose = require('mongoose')
+const passport = require('passport')
 
 const authRouter = require('./routes/auth.routes')
 
@@ -13,11 +13,11 @@ const app = express()
 const PORT = process.env.PORT || 5000
 
 app.use(passport.initialize())
-app.use(cookieParser());
+app.use(cookieParser())
 app.use(cors({
   withCredentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
-  origin: '*'
+  origin: '*',
 }))
 app.use(express.json())
 
@@ -25,7 +25,7 @@ app.use(express.json())
 app.use('/api/auth/', authRouter)
 
 
-const START = async () => {
+const start = async () => {
   try {
     const dbURL = process.env.dbURL
     await mongoose
@@ -34,7 +34,7 @@ const START = async () => {
         useCreateIndex: true,
         useUnifiedTopology: true,
         useFindAndModify: false,
-        tls: true
+        tls: true,
       })
     consola.success('Database connected')
     app.listen(PORT, () => {
@@ -45,4 +45,4 @@ const START = async () => {
   }
 }
 
-START()
+start()
