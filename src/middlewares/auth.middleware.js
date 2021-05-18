@@ -6,7 +6,7 @@ const authMiddleware = (req, res, next) => {
     session: false,
   }, (err, user) => {
     if (!user || err) {
-      return res.status(400).json({
+      return res.status(500).json({
         status: 'error',
         error: 'Authentication failed',
       })

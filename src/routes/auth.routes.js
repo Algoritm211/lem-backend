@@ -7,7 +7,7 @@ const router = new Router()
 
 router.post('/registration', AuthController.registration)
 router.post('/login', AuthController.login)
-router.get('/auth', authMiddleware, AuthController.authenticate)
+router.get('/authorization', authMiddleware, AuthController.authenticate)
 
 
 module.exports = router

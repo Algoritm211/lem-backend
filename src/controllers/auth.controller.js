@@ -7,7 +7,7 @@ const JWT = require('jsonwebtoken')
 class AuthController {
   async registration(req, res) {
     try {
-      const { email, name, password } = req.body
+      const { email, name, password, role } = req.body
 
       const user = await User.findOne({ email: email })
 
@@ -23,10 +23,15 @@ class AuthController {
         surName: '',
         age: '',
         birthdayDate: '',
-        role: 'student',
+        role: role,
       })
       await newUser.save()
-      return res.status(200).json({ message: 'User created successfully' })
+      const token = await JWT.sign({ id: newUser._id }, process.env.secretKey, {})
+      res.cookie('authToken', token, { secure: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'none' })
+      return res.status(200).json({
+        token: token,
+        user: newUser,
+      })
     } catch (error) {
       consola.error(error)
       return res.status(500).json({ message: 'Can not register user' })
@@ -50,10 +55,10 @@ class AuthController {
       }
 
       const token = await JWT.sign({ id: user._id }, process.env.secretKey, {})
-      // response.cookie('authToken', token, {secure: true, maxAge: 24 * 60 * 60 * 1000});
-      res.header('Set-Cookie', [
-        `authToken=${token}; SameSite=None; path=/; Expires=${new Date(Date.now() + 86400e3)}`,
-      ])
+      res.cookie('authToken', token, { secure: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'none' })
+      // res.header('Set-Cookie', [
+      //   `authToken=${token}; SameSite=None; path=/; Expires=${new Date(Date.now() + 86400e3)}`,
+      // ])
 
       return res.status(200).json({
         token: token,
@@ -68,7 +73,7 @@ class AuthController {
   async authenticate(req, res) {
     try {
       const { user } = req
-      return res.status(500).json({
+      return res.status(200).json({
         user,
       })
     } catch (error) {

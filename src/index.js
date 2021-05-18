@@ -12,15 +12,16 @@ const authRouter = require('./routes/auth.routes')
 const app = express()
 const PORT = process.env.PORT || 5000
 
+
 app.use(passport.initialize())
 app.use(cookieParser())
 app.use(cors({
-  withCredentials: true,
+  credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
-  origin: '*',
+  origin: ['http://localhost:3000'],
 }))
-app.use(express.json())
 
+app.use(express.json())
 
 app.use('/api/auth/', authRouter)
 
