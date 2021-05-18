@@ -55,7 +55,7 @@ class AuthController {
       }
 
       const token = await JWT.sign({ id: user._id }, process.env.secretKey, {})
-      res.cookie('authToken', token, { secure: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'none' })
+      res.cookie('authToken', token, { maxAge: 24 * 60 * 60 * 1000, sameSite: 'none' })
       // res.header('Set-Cookie', [
       //   `authToken=${token}; SameSite=None; path=/; Expires=${new Date(Date.now() + 86400e3)}`,
       // ])
