@@ -5,7 +5,10 @@ const User = new Schema({
   password: { type: String, required: true },
   name: { type: String, required: true },
   fromGoogleAuth: { type: Boolean },
-  avatar: { type: String },
+  avatar: {
+    url: String,
+    name: String,
+  },
   city: { type: String },
   age: { type: Number },
   description: { type: String },

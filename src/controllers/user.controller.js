@@ -1,8 +1,7 @@
 const User = require('../models/User')
 const bcrypt = require('bcryptjs')
-const path = require('path')
-const fs = require('fs')
 const consola = require('consola')
+const cloudinary = require('../cloudinary/cloudinary.config').v2
 
 class UserController {
   async updateUser(req, res) {
@@ -38,43 +37,46 @@ class UserController {
   async uploadAvatar(req, res) {
     try {
       const { photo } = req.files
-      const photoName = Date.now() + photo.name
-      const newPhotoPath = path.join(req.staticPath, photoName)
-
-      const user = await User.findOne({ _id: req.user.id })
-      if (user.avatar) {
-        const oldPhotoPath = path.join(req.staticPath, user.avatar)
-        if (fs.existsSync(oldPhotoPath) && oldPhotoPath !== req.staticPath) {
-          fs.unlinkSync(oldPhotoPath)
-        }
-      }
-      user.avatar = photoName
-      await photo.mv(newPhotoPath)
-      await user.save()
-
-      return res.status(201).json({
-        user: user,
-      })
+      cloudinary.uploader
+        .upload_stream({ resource_type: 'auto' }, async (error, result) => {
+          if (error || !result) {
+            return res.status(500).json({
+              status: 'error',
+              message: error || 'upload error',
+            })
+          }
+          const user = await User.findOne({ _id: req.user.id })
+          user.avatar = {
+            url: result.url,
+            name: result.public_id,
+          }
+          await user.save()
+          res.status(201).json({
+            user,
+          })
+        }).end(photo.data)
     } catch (error) {
-      console.log(error)
-      return res.status(500).json({ message: 'Fail while uploading avatar' })
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not upload avatar' })
     }
   }
 
   async deleteAvatar(req, res) {
     try {
       const user = await User.findOne({ _id: req.user.id })
-      const filePath = path.join(req.staticPath, user.avatar)
-      user.avatar = ''
-      await user.save()
-
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath)
+      await cloudinary.uploader.destroy(user.avatar.name, async (error, result) => {
+        if (error || !result) {
+          return res.status(500).json({
+            status: 'error',
+            message: error || 'upload error',
+          })
+        }
+        user.avatar = { url: '', name: '' }
+        await user.save()
         return res.status(200).json({ message: 'Deleting successfully', user: user })
-      }
-      return res.status(200).json({ message: 'File was not found', user: user })
+      })
     } catch (error) {
-      console.log(error)
+      consola.error(error)
       return res.status(500).json({ message: 'Error while deleting avatar' })
     }
   }
@@ -82,11 +84,6 @@ class UserController {
   async deleteAccount(req, res) {
     try {
       const user = await User.findOne({ _id: req.user.id })
-      const filePath = path.join(req.staticPath, user?.avatar || 'photo')
-
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath)
-      }
       await user.remove()
       return res.status(200).json({ message: 'Deleted successfully' })
     } catch (error) {
