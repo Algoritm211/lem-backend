@@ -5,7 +5,7 @@ const Course = new Schema({
   description: { type: String },
   category: { type: String },
   rating: { type: Number },
-  coursePreview: { type: String },
+  coursePreview: { type: String, default: '' },
   isReady: { type: Boolean },
   author: { type: ObjectId, ref: 'User' },
   lessons: [{ type: ObjectId, ref: 'Lesson' }],

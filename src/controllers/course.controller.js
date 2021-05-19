@@ -76,6 +76,33 @@ class CourseController {
     }
   }
 
+  async toggleLike(req, res) {
+    try {
+      const { courseId } = req.query
+
+      const user = await User.findOne({ _id: req.user.id })
+      const course = await Course.findOne({ _id: courseId }).populate('author')
+      if (user.likedCourses && user.likedCourses.includes(courseId)) {
+        course.rating = course.rating - 1
+        user.likedCourses.remove(course._id)
+      } else {
+        course.rating = course.rating + 1
+        user.likedCourses.push(course._id)
+      }
+
+      await course.save()
+      await user.save()
+      return res.status(200).json({
+        course: course,
+        user: user,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not like course' })
+    }
+  }
+
+
   async deleteCourse(req, res) {
     try {
       const { courseId } = req.query

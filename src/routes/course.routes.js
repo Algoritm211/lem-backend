@@ -5,6 +5,7 @@ const router = new Router()
 
 router.post('/create', authMiddleware, CourseController.createCourses)
 router.get('', CourseController.getAllCourses)
+router.get('/like', authMiddleware, CourseController.toggleLike)
 router.get('/:id', CourseController.getOne)
 
 module.exports = router
