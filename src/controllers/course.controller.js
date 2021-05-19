@@ -53,7 +53,6 @@ class CourseController {
         .skip(Number(page - 1) * COURSES_ON_PAGE)
         .limit(6)
       const coursesCount = await Course.countDocuments(filterParam)
-
       return res.status(200).json({
         coursesCount: coursesCount,
         courses: courses,

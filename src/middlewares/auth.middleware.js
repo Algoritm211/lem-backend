@@ -5,6 +5,7 @@ const authMiddleware = (req, res, next) => {
   return passport.authenticate('jwt', {
     session: false,
   }, (err, user) => {
+    // console.log(err, user)
     if (!user || err) {
       return res.status(500).json({
         status: 'error',
