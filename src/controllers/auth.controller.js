@@ -81,6 +81,20 @@ class AuthController {
       return res.status(500).json({ message: 'Can not auth user' })
     }
   }
+
+  async logout(req, res) {
+    if (!req.cookies['authToken']) {
+      return res.status(400).json({
+        status: 'error',
+        message: `You're already out`,
+      })
+    }
+    res.clearCookie('authToken')
+
+    return res.json({
+      message: 'Logout successfully',
+    })
+  }
 }
 
 
