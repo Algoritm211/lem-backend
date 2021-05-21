@@ -14,7 +14,7 @@ passport.use('jwt', new Strategy( {
   secretOrKey: process.env.secretKey,
 }, async (token, done) => {
   try {
-    const user = await User.findOne({ _id: token.id }).populate('courses')
+    const user = await User.findOne({ _id: token.id })
 
     if (!user) {
       return done(null, false)

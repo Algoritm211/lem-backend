@@ -38,7 +38,7 @@ class UserController {
     try {
       const { photo } = req.files
       cloudinary.uploader
-        .upload_stream({ resource_type: 'auto' }, async (error, result) => {
+        .upload_stream({ resource_type: 'auto', folder: 'avatars' }, async (error, result) => {
           if (error || !result) {
             return res.status(500).json({
               status: 'error',

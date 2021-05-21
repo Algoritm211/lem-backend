@@ -10,7 +10,10 @@ const Course = new Schema({
   category: { type: String },
   rating: { type: Number },
   subject: { type: String },
-  coursePreview: { type: String, default: '' },
+  coursePreview: {
+    url: String,
+    name: String,
+  },
   isReady: { type: Boolean },
   author: { type: ObjectId, ref: 'User' },
   lessons: [{ type: ObjectId, ref: 'Lesson' }],
