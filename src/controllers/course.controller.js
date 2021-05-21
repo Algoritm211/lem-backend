@@ -6,7 +6,7 @@ const consola = require('consola')
 // const cloudinary = require('../cloudinary/cloudinary.config').v2
 
 class CourseController {
-  async createCourses(req, res) {
+  async create(req, res) {
     try {
       // const { photo } = req.files
       const { title, description, subject } = req.body
@@ -79,7 +79,7 @@ class CourseController {
     }
   }
 
-  async getAllCourses(req, res) {
+  async getAll(req, res) {
     try {
       const { page, filters: rawFilters } = req.query
       const COURSES_ON_PAGE = 6
@@ -155,7 +155,7 @@ class CourseController {
     }
   }
 
-  async subscribeToCourse(req, res) {
+  async subscribe(req, res) {
     try {
       const { courseId } = req.query
       const user = await User.findOne({ _id: req.user.id })
@@ -174,7 +174,7 @@ class CourseController {
     }
   }
 
-  async unsubscribeCourse(req, res) {
+  async unsubscribe(req, res) {
     try {
       const { courseId } = req.query
 
@@ -200,7 +200,7 @@ class CourseController {
     }
   }
 
-  async deleteCourse(req, res) {
+  async delete(req, res) {
     try {
       const { courseId } = req.query
       const course = await Course.findOne({ _id: courseId })
