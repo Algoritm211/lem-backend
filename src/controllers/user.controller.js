@@ -41,6 +41,10 @@ class UserController {
       const { photo } = req.files
       const user = await User.findOne({ _id: req.user.id })
       // eslint-disable-next-line camelcase
+      if (user?.avatar?.url) {
+        await CloudinaryService.deletePhoto(user.avatar.name)
+      }
+      // eslint-disable-next-line camelcase
       const { url, public_id } = await CloudinaryService.uploadPhoto(photo.data, 'avatars')
       user.avatar = {
         url: url,

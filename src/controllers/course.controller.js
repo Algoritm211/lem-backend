@@ -1,6 +1,7 @@
 const Course = require('../models/Course')
 const Lesson = require('../models/Lesson')
 const User = require('../models/User')
+const CloudinaryService = require('../services/cloudinary.service')
 const consola = require('consola')
 
 // const cloudinary = require('../cloudinary/cloudinary.config').v2
@@ -8,44 +9,7 @@ const consola = require('consola')
 class CourseController {
   async create(req, res) {
     try {
-      // const { photo } = req.files
       const { title, description, subject } = req.body
-      // cloudinary.uploader
-      //   .upload_stream({ resource_type: 'auto', folder: 'courses' }, async (error, result) => {
-      //     if (error || !result) {
-      //       return res.status(500).json({
-      //         status: 'error',
-      //         message: error || 'upload error',
-      //       })
-      //     }
-      //
-      //     const course = new Course({
-      //       author: req.user.id, // from auth.middleware
-      //       title: title,
-      //       subject: subject,
-      //       description: description,
-      //       coursePreview: {
-      //         url: result.url,
-      //         name: result.public_id,
-      //       },
-      //       rating: 0,
-      //       isReady: false,
-      //     })
-      //
-      //     const lessonsPreparingArr = [1].fill({ title: '', body: '', homeWork: '', course: course._id })
-      //     const lessons = await Lesson.insertMany(lessonsPreparingArr)
-      //     const user = await User.findOne({ _id: req.user.id })
-      //     user.coursesAuthor.push(course._id)
-      //     lessons.forEach((lesson) => {
-      //       course.lessons.push(lesson._id)
-      //     })
-      //     await course.save()
-      //     await user.save()
-      //     return res.status(201).json({
-      //       course: course,
-      //       message: 'Course was created successfully',
-      //     })
-      //   }).end(photo.data)
 
       const course = new Course({
         author: req.user.id, // from auth.middleware
@@ -76,6 +40,21 @@ class CourseController {
     } catch (error) {
       consola.error(error)
       return res.status(500).json({ message: 'Error while adding courses' })
+    }
+  }
+
+  async update(req, res) {
+    try {
+      const { title, description, about, id } = req.body
+      const course = await Course.findOne({ _id: id })
+      course.title = title
+      course.description = description
+      course.about = about
+      await course.save()
+      return res.status(201).json({ course })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not update the course' })
     }
   }
 
@@ -121,11 +100,40 @@ class CourseController {
 
   async getUserCourses(req, res) {
     try {
-      const user = await User.findOne({ _id: req.user.id }).populate({ path: 'courses', populate: { path: 'author' } })
-      return res.status(200).json({ courses: user.courses })
+      const user = await User.findOne({ _id: req.user.id })
+        .populate({ path: 'courses', populate: { path: 'author' } })
+        .populate({ path: 'coursesAuthor', populate: { path: 'author' } })
+      return res.status(200).json({
+        coursesAuthor: user.coursesAuthor,
+        courses: user.courses,
+      })
     } catch (error) {
       consola.error(error)
       return res.status(500).json({ message: 'Error while getting user courses' })
+    }
+  }
+
+  async updatePreview(req, res) {
+    try {
+      const { photo } = req.files
+      const { id } = req.body
+      const course = await Course.findOne({ _id: id })
+      if (course?.coursePreview?.url) {
+        await CloudinaryService.deletePhoto(course.coursePreview.name)
+      }
+      // eslint-disable-next-line camelcase
+      const { url, public_id } = await CloudinaryService.uploadPhoto(photo.data, 'courses')
+      course.coursePreview = {
+        url: url,
+        name: public_id,
+      }
+      await course.save()
+      return res.status(201).json({
+        course,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not update preview' })
     }
   }
 

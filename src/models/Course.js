@@ -5,8 +5,8 @@ const { model, Schema, ObjectId } = require('mongoose')
 
 const Course = new Schema({
   title: { type: String },
-  description: { type: String },
-  about: { type: String },
+  description: { type: String }, // short description
+  about: { type: String }, // long description
   category: { type: String },
   rating: { type: Number },
   subject: { type: String },
