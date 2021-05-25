@@ -2,6 +2,18 @@ const { model, Schema, ObjectId } = require('mongoose')
 
 const Lesson = new Schema({
   title: { type: String },
+  steps: [{
+    stepId: {
+      type: ObjectId,
+      required: true,
+      refPath: 'steps.stepModel',
+    },
+    stepModel: {
+      type: String,
+      required: true,
+      enum: ['Text', 'Video'],
+    },
+  }],
   course: { type: ObjectId, ref: 'Course' },
 })
 

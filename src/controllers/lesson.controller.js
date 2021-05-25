@@ -1,6 +1,8 @@
 const consola = require('consola')
 const Course = require('../models/Course')
 const Lesson = require('../models/Lesson')
+const Text = require('../models/lessonTypes/Text')
+const Video = require('../models/lessonTypes/Video')
 
 class LessonController {
   async create(req, res) {
@@ -48,7 +50,10 @@ class LessonController {
   async getOne(req, res) {
     try {
       const { id } = req.params
-      const lesson = await Lesson.findOne({ _id: id }).populate('course')
+      const lesson = await Lesson.findOne({ _id: id })
+        .populate('course')
+        .populate({ path: 'steps.stepId' })
+
       return res.status(200).json({
         lesson: lesson,
         course: lesson.course,
