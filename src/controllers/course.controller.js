@@ -2,6 +2,7 @@ const Course = require('../models/Course')
 const Lesson = require('../models/Lesson')
 const User = require('../models/User')
 const CloudinaryService = require('../services/cloudinary.service')
+const LessonService = require('../services/lesson.service')
 const consola = require('consola')
 
 // const cloudinary = require('../cloudinary/cloudinary.config').v2
@@ -23,14 +24,10 @@ class CourseController {
         rating: 0,
         isReady: false,
       })
-
-      const lessonsPreparingArr = [1].fill({ title: '', body: '', homeWork: '', course: course._id })
-      const lessons = await Lesson.insertMany(lessonsPreparingArr)
+      const lesson = await LessonService.create(course._id)
+      course.lessons.push(lesson._id)
       const user = await User.findOne({ _id: req.user.id })
       user.coursesAuthor.push(course._id)
-      lessons.forEach((lesson) => {
-        course.lessons.push(lesson._id)
-      })
       await course.save()
       await user.save()
       return res.status(201).json({
