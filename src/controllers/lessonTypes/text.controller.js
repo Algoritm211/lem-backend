@@ -26,7 +26,14 @@ class TextController {
 
   async update(req, res) {
     try {
-
+      const { id } = req.params
+      const { body } = req.body
+      const textLesson = await Text.findOne({ _id: id })
+      textLesson.body = body
+      await textLesson.save()
+      return res.status(200).json({
+        lesson: textLesson,
+      })
     } catch (error) {
       consola.error(error)
       return res.status(500).json({ message: 'Can not update text lesson' })
