@@ -5,6 +5,11 @@ const Text = require('../models/lessonTypes/Text')
 const Video = require('../models/lessonTypes/Video')
 const LessonService = require('../services/lesson.service')
 
+const lessonStepsTypes = {
+  Text: Text,
+  Video: Video,
+}
+
 class LessonController {
   async create(req, res) {
     try {
@@ -44,7 +49,10 @@ class LessonController {
         { _id: lesson.course },
         { $pull: { lessons: lesson._id } },
       )
-
+      const { steps } = await Lesson.findOne({ _id: id })
+      for (let idx = 0; idx < steps.length; idx++) {
+        await lessonStepsTypes[steps[idx]['stepModel']].deleteOne({ _id: steps[idx]['stepId'] })
+      }
       await lesson.remove()
       return res.status(200).json({ message: 'Deleted successfully' })
     } catch (error) {
