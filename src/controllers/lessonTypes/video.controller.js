@@ -6,10 +6,9 @@ class VideoController {
   async create(req, res) {
     try {
       const { lessonId } = req.params
-      const { url } = req.body
       const newVideoStep = new Video({
         lesson: lessonId,
-        url: url,
+        url: 'here paste your YouTube URL, add embed link of your video',
       })
       const lesson = await Lesson.findOne({ _id: lessonId })
       lesson.steps.push({ stepId: newVideoStep._id, stepModel: 'Text' })

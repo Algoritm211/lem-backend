@@ -6,10 +6,9 @@ class TextController {
   async create(req, res) {
     try {
       const { lessonId } = req.params
-      const { body } = req.body
       const newTextStep = new Text({
         lesson: lessonId,
-        body: body,
+        body: '<p>Generated text by robot</p>',
       })
       const lesson = await Lesson.findOne({ _id: lessonId })
       lesson.steps.push({ stepId: newTextStep._id, stepModel: 'Text' })
