@@ -15,7 +15,7 @@ class TextController {
       await newTextStep.save()
       await lesson.save()
       return res.status(201).json({
-        step: newTextStep,
+        step: lesson.steps[lesson.steps.length - 1],
       })
     } catch (error) {
       consola.error(error)
@@ -27,11 +27,11 @@ class TextController {
     try {
       const { id } = req.params
       const { body } = req.body
-      const textLesson = await Text.findOne({ _id: id })
-      textLesson.body = body
-      await textLesson.save()
+      const textStep = await Text.findOne({ _id: id })
+      textStep.body = body
+      await textStep.save()
       return res.status(200).json({
-        lesson: textLesson,
+        step: textStep,
       })
     } catch (error) {
       consola.error(error)
@@ -41,7 +41,11 @@ class TextController {
 
   async getOne(req, res) {
     try {
-
+      const { id } = req.params
+      const textLesson = await Text.findOne({ _id: id })
+      return res.status(200).json({
+        step: textLesson,
+      })
     } catch (error) {
       consola.error(error)
       return res.status(500).json({ message: 'Can not get text lesson' })

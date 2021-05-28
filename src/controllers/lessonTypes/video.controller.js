@@ -11,11 +11,11 @@ class VideoController {
         url: 'here paste your YouTube URL, add embed link of your video',
       })
       const lesson = await Lesson.findOne({ _id: lessonId })
-      lesson.steps.push({ stepId: newVideoStep._id, stepModel: 'Text' })
+      lesson.steps.push({ stepId: newVideoStep._id, stepModel: 'Video' })
       await newVideoStep.save()
       await lesson.save()
       return res.status(201).json({
-        step: newVideoStep,
+        step: lesson.steps[lesson.steps.length - 1],
       })
     } catch (error) {
       consola.error(error)
@@ -36,6 +36,19 @@ class VideoController {
     } catch (error) {
       consola.error(error)
       return res.status(500).json({ message: 'Can not update video lesson' })
+    }
+  }
+
+  async getOne(req, res) {
+    try {
+      const { id } = req.params
+      const videoLesson = await Video.findOne({ _id: id })
+      return res.status(200).json({
+        step: videoLesson,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not get video lesson' })
     }
   }
 }

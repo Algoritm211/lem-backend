@@ -66,7 +66,7 @@ class LessonController {
       const { id } = req.params
       const lesson = await Lesson.findOne({ _id: id })
         .populate({ path: 'course', populate: 'author' })
-        .populate({ path: 'steps.stepId' })
+        .populate({ path: 'steps' })
 
       return res.status(200).json({
         lesson: lesson,
