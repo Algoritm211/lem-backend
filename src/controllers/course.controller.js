@@ -205,6 +205,21 @@ class CourseController {
     }
   }
 
+  async toggleReady(req, res) {
+    try {
+      const { id } = req.params
+      const course = await Course.findOne({ _id: id })
+      course.isReady = !course.isReady
+      await course.save()
+      return res.status(200).json({
+        course,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Error while toggle ready lesson' })
+    }
+  }
+
   async delete(req, res) {
     try {
       const { courseId } = req.query

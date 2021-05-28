@@ -10,6 +10,7 @@ router.post('/create', authMiddleware, CourseController.create)
 router.post('/update', authMiddleware, CourseController.update)
 router.post('/preview-update', authMiddleware, CourseController.updatePreview)
 router.get('', CourseController.getAll)
+router.patch('/toggleready/:id', CourseController.toggleReady)
 router.get('/like', authMiddleware, CourseController.toggleLike)
 router.get('/:id', CourseController.getOne)
 
