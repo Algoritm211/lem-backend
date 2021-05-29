@@ -85,6 +85,21 @@ class UserController {
       res.status(500).json({ message: 'Can not delete account' })
     }
   }
+
+  async addStepToCompleted(req, res) {
+    try {
+      const { stepId } = req.query
+      const user = await User.findOne({ _id: req.user.id })
+      user.stepsCompleted.push(stepId)
+      await user.save()
+      return res.status(200).json({
+        user,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not add step to completed' })
+    }
+  }
 }
 
 module.exports = new UserController()

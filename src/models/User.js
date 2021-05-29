@@ -21,6 +21,7 @@ const User = new Schema({
   courses: [{ type: ObjectId, ref: 'Course' }],
   likedCourses: [{ type: ObjectId, ref: 'Course' }],
   lessonsCompleted: [{ type: ObjectId, ref: 'Lesson' }],
+  stepsCompleted: [{ type: ObjectId }],
 })
 
 module.exports = model('User', User)

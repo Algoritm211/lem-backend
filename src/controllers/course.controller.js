@@ -69,6 +69,7 @@ class CourseController {
 
       const courses = await Course.find(filterParam)
         .populate('author')
+        .populate('lessons')
         .skip(Number(page - 1) * COURSES_ON_PAGE)
         .limit(6)
       const coursesCount = await Course.countDocuments(filterParam)
@@ -98,8 +99,10 @@ class CourseController {
   async getUserCourses(req, res) {
     try {
       const user = await User.findOne({ _id: req.user.id })
+        .populate({ path: 'courses', populate: { path: 'lessons' } })
         .populate({ path: 'courses', populate: { path: 'author' } })
         .populate({ path: 'coursesAuthor', populate: { path: 'author' } })
+        .populate({ path: 'coursesAuthor', populate: { path: 'lessons' } })
       return res.status(200).json({
         coursesAuthor: user.coursesAuthor,
         courses: user.courses,
