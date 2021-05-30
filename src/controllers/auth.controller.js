@@ -7,7 +7,7 @@ const JWT = require('jsonwebtoken')
 class AuthController {
   async registration(req, res) {
     try {
-      const { email, name, password, role } = req.body
+      const { email, name, password } = req.body
 
       const user = await User.findOne({ email: email })
 
@@ -20,10 +20,6 @@ class AuthController {
         email: email,
         password: hashPassword,
         name: name,
-        surName: '',
-        age: '',
-        birthdayDate: '',
-        role: role,
       })
       await newUser.save()
       const token = await JWT.sign({ id: newUser._id }, process.env.secretKey, {})
@@ -56,9 +52,6 @@ class AuthController {
 
       const token = await JWT.sign({ id: user._id }, process.env.secretKey, {})
       res.cookie('authToken', token, { secure: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'none' })
-      // res.header('Set-Cookie', [
-      //   `authToken=${token}; SameSite=None; path=/; Expires=${new Date(Date.now() + 86400e3)}`,
-      // ])
 
       return res.status(200).json({
         token: token,
@@ -94,6 +87,32 @@ class AuthController {
     return res.json({
       message: 'Logout successfully',
     })
+  }
+
+  async socialAuth(req, res) {
+    try {
+      const { authInfo, user } = req
+      if (authInfo.statusCode !== 200 && authInfo.statusCode !== 404) {
+        console.log(authInfo.statusCode)
+        return res.status(500).json({ message: 'Auth Failed' })
+      }
+
+      let userInfo = user
+
+      if (authInfo.statusCode === 404) {
+        userInfo = new User({ ...user })
+        await userInfo.save()
+      }
+
+      const token = await JWT.sign({ id: userInfo._id }, process.env.secretKey, {})
+      res.cookie('authToken', token, { secure: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'none' })
+      return res.send(
+        `<script>window.opener.postMessage('${JSON.stringify({ token, user: userInfo })}', '*');window.close();</script>`,
+      )
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Auth Failed' })
+    }
   }
 }
 

@@ -5,7 +5,6 @@ const CloudinaryService = require('../services/cloudinary.service')
 const LessonService = require('../services/lesson.service')
 const consola = require('consola')
 
-// const cloudinary = require('../cloudinary/cloudinary.config').v2
 
 class CourseController {
   async create(req, res) {
@@ -142,7 +141,9 @@ class CourseController {
       const { courseId } = req.query
 
       const user = await User.findOne({ _id: req.user.id })
-      const course = await Course.findOne({ _id: courseId }).populate('author')
+      const course = await Course.findOne({ _id: courseId })
+        .populate('author')
+        .populate('lessons')
       if (user.likedCourses && user.likedCourses.includes(courseId)) {
         course.rating = course.rating - 1
         user.likedCourses.remove(course._id)
