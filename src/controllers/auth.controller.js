@@ -3,6 +3,11 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const JWT = require('jsonwebtoken')
 
+const cookieOptions = {
+  secure: true,
+  maxAge: 24 * 60 * 60 * 1000,
+  sameSite: 'none',
+}
 
 class AuthController {
   async registration(req, res) {
@@ -23,7 +28,7 @@ class AuthController {
       })
       await newUser.save()
       const token = await JWT.sign({ id: newUser._id }, process.env.secretKey, {})
-      res.cookie('authToken', token, { secure: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'none' })
+      res.cookie('authToken', token, cookieOptions)
       return res.status(200).json({
         token: token,
         user: newUser,
@@ -51,7 +56,7 @@ class AuthController {
       }
 
       const token = await JWT.sign({ id: user._id }, process.env.secretKey, {})
-      res.cookie('authToken', token, { secure: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'none' })
+      res.cookie('authToken', token, cookieOptions)
 
       return res.status(200).json({
         token: token,
@@ -105,7 +110,7 @@ class AuthController {
       }
 
       const token = await JWT.sign({ id: userInfo._id }, process.env.secretKey, {})
-      res.cookie('authToken', token, { secure: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'none' })
+      res.cookie('authToken', token, cookieOptions)
       return res.send(
         `<script>window.opener.postMessage('${JSON.stringify({ token, user: userInfo })}', '*');window.close();</script>`,
       )

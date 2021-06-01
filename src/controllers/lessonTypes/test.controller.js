@@ -7,12 +7,12 @@ class TestController {
     try {
       const { lessonId } = req.params
       const mockData = {
-        question: 'How are you?',
-        options: ['Good', 'Amazing'],
-        answers: ['Amazing'],
+        question: 'Your Question',
+        options: ['Variant 1'],
+        answers: ['Variant 1'],
         type: 'single',
       }
-      const { options, answers, question, type } = mockData // req.body
+      const { options, answers, question, type } = mockData
       const newTest = new Test({ options, answers, question, type })
       const lesson = await Lesson.findOne({ _id: lessonId })
       lesson.steps.push({ stepId: newTest._id, stepModel: 'Test' })
@@ -28,7 +28,21 @@ class TestController {
   }
 
   async update(req, res) {
-
+    try {
+      const { id } = req.params
+      const { options, answers, question, type } = req.body
+      const testStep = await Test.findOneAndUpdate(
+        { _id: id },
+        { options, answers, question, type },
+        { new: true },
+      )
+      return res.status(200).json({
+        step: testStep,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not update test step' })
+    }
   }
 
   async getOne(req, res) {
