@@ -11,7 +11,7 @@ const Lesson = new Schema({
     stepModel: {
       type: String,
       required: true,
-      enum: ['Text', 'Video', 'TextWithAnswer'],
+      enum: ['Text', 'Video', 'TextWithAnswer', 'Test'],
     },
   }],
   course: { type: ObjectId, ref: 'Course' },
