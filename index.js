@@ -26,7 +26,7 @@ app.use(cookieParser())
 app.use(cors({
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
-  origin: ['http://localhost:3000'],
+  origin: ['http://localhost:3000', 'https://platform-lem.vercel.app'],
 }))
 
 app.use(express.json())
