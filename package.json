@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {
+    "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "lint:eslint": "npx eslint --ext .js .",
     "editorconfig": "editorconfig-checker",
