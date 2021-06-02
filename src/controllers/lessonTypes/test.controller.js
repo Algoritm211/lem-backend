@@ -10,6 +10,7 @@ class TestController {
         question: 'Your Question',
         options: ['Variant 1'],
         answers: ['Variant 1'],
+        userAnswers: [],
         type: 'single',
       }
       const { options, answers, question, type } = mockData

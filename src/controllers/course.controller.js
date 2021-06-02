@@ -212,7 +212,7 @@ class CourseController {
   async toggleReady(req, res) {
     try {
       const { id } = req.params
-      const course = await Course.findOne({ _id: id })
+      const course = await Course.findOne({ _id: id }).populate('lessons')
       course.isReady = !course.isReady
       await course.save()
       return res.status(200).json({
