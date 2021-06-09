@@ -4,7 +4,7 @@ const consola = require('consola')
 const dotenv = require('dotenv')
 dotenv.config()
 const fileUpload = require('express-fileupload')
-const cookieParser = require( 'cookie-parser')
+const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 const passport = require('passport')
 

@@ -12,6 +12,7 @@ router.post('/preview-update', authMiddleware, CourseController.updatePreview)
 router.get('', CourseController.getAll)
 router.patch('/toggleready/:id', CourseController.toggleReady)
 router.get('/like', authMiddleware, CourseController.toggleLike)
+router.get('/mark/:id', CourseController.getMarks)
 router.get('/:id', CourseController.getOne)
 
 module.exports = router

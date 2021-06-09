@@ -220,7 +220,22 @@ class CourseController {
       })
     } catch (error) {
       consola.error(error)
-      return res.status(500).json({ message: 'Error while toggle ready lesson' })
+      return res.status(500).json({ message: 'Error while toggle ready course' })
+    }
+  }
+
+  async getMarks(req, res) {
+    try {
+      const { id } = req.params
+      const course = await Course.findOne({ _id: id })
+        .populate({ path: 'lessons' })
+
+      return res.status(200).json({
+        course,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Error while loading marks' })
     }
   }
 

@@ -14,6 +14,14 @@ const Lesson = new Schema({
       enum: ['Text', 'Video', 'TextWithAnswer', 'Test'],
     },
   }],
+  students: [{
+    userId: {
+      type: ObjectId,
+      ref: 'User',
+    },
+    completedTests: [],
+    mark: { type: Number, default: 0 },
+  }],
   course: { type: ObjectId, ref: 'Course' },
 })
 

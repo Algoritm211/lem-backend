@@ -78,6 +78,41 @@ class LessonController {
     }
   }
 
+  async addLessonUserMark(req, res) {
+    try {
+      const { id } = req.params
+      const userId = req.user.id
+      const { mark, lessonStepId } = req.body
+      const lesson = await Lesson.findOne({ _id: id })
+
+      const student = lesson?.students?.find((student) => {
+        return String(student.userId) === userId
+      })
+
+      if (student?.completedTests?.includes(lessonStepId)) {
+        return res.status(500).json({ message: 'You have already answered on this question' })
+      }
+
+      if (!lesson.students || lesson.students.length === 0) {
+        lesson.students = []
+        lesson.students.push({ userId: userId, completedTests: [lessonStepId], mark: mark })
+      }
+
+      if (student) {
+        student.mark += mark
+        student.completedTests.push(lessonStepId)
+      }
+
+      await lesson.save()
+      return res.status(200).json({
+        lesson,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not add user Mark' })
+    }
+  }
+
   // updateObj may contains only fields in Lesson model
   async update(req, res) {
     try {

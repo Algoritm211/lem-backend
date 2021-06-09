@@ -12,9 +12,10 @@ class TestController {
         answers: ['Variant 1'],
         userAnswers: [],
         type: 'single',
+        lesson: lessonId,
       }
-      const { options, answers, question, type } = mockData
-      const newTest = new Test({ options, answers, question, type })
+      const { options, answers, question, type, lesson: boundLesson } = mockData
+      const newTest = new Test({ options, answers, question, type, lesson: boundLesson })
       const lesson = await Lesson.findOne({ _id: lessonId })
       lesson.steps.push({ stepId: newTest._id, stepModel: 'Test' })
       await newTest.save()
