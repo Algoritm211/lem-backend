@@ -1,4 +1,5 @@
 const { model, Schema, ObjectId } = require('mongoose')
+const { stepTypes } = require('./enums')
 
 const Lesson = new Schema({
   title: { type: String },
@@ -11,7 +12,7 @@ const Lesson = new Schema({
     stepModel: {
       type: String,
       required: true,
-      enum: ['Text', 'Video', 'TextWithAnswer', 'Test'],
+      enum: stepTypes,
     },
   }],
   students: [{
