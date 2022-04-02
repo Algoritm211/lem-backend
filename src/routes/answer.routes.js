@@ -3,7 +3,7 @@ const AnswerController = require('../controllers/answer.controller')
 
 const router = new Router()
 
-router.get('', AnswerController.getAnswersByCourse)
+router.get('/:courseId', AnswerController.getAnswersByCourse)
 router.post('', AnswerController.addNewAnswer)
 
 

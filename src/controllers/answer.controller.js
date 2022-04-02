@@ -28,7 +28,7 @@ class AnswerController {
 
   async getAnswersByCourse(req, res) {
     try {
-      const { courseId } = req.query
+      const { courseId } = req.params
 
       const coursesWithSteps = await Course.findOne({
         _id: courseId,
