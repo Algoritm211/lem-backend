@@ -1,4 +1,4 @@
 
-const stepTypes = ['Text', 'Video', 'TextWithAnswer', 'Test']
+const stepTypes = ['Text', 'Video', 'TextWithAnswer', 'Test', 'Code']
 
 module.exports = { stepTypes }

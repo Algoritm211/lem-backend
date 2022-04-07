@@ -19,6 +19,7 @@ const lessonTextRouter = require('./src/routes/lessonTypes/text.router')
 const lessonVideoRouter = require('./src/routes/lessonTypes/video.router')
 const lessonTextWithAnswerRouter = require('./src/routes/lessonTypes/textWithAnswer.router')
 const lessonTestRouter = require('./src/routes/lessonTypes/test.router')
+const codeRouter = require('./src/routes/lessonTypes/code.router')
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -46,6 +47,7 @@ app.use('/api/lesson/text/', lessonTextRouter)
 app.use('/api/lesson/textanswer/', lessonTextWithAnswerRouter)
 app.use('/api/lesson/video/', lessonVideoRouter)
 app.use('/api/lesson/test/', lessonTestRouter)
+app.use('/api/lesson/code/', codeRouter)
 
 
 const start = async () => {
