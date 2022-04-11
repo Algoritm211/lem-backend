@@ -17,7 +17,6 @@
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.25.1",
-    "code-runner": "^1.0.7",
     "consola": "^2.15.3",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -25,6 +24,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "mongoose": "^5.12.9",
+    "nanoid": "^3.3.2",
     "nodemon": "^2.0.7",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0"

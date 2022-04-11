@@ -1,7 +1,7 @@
-const runner = require('code-runner')
 const consola = require('consola')
 const Code = require('../../models/lessonTypes/Code')
 const Lesson = require('../../models/Lesson')
+const CodeService = require('../../services/code.service')
 
 class CodeController {
   async create(req, res) {
@@ -27,10 +27,18 @@ class CodeController {
   async update(req, res) {
     try {
       const { id } = req.params
-      const { body, score } = req.body
+      const { body, score, tests, answer } = req.body
       const codeStep = await Code.findOne({ _id: id })
-      codeStep.body = body
-      codeStep.score = score
+      if (body && score && tests) {
+        codeStep.body = body
+        codeStep.score = score
+        codeStep.tests = tests
+      }
+
+      if (answer) {
+        codeStep.answer = answer
+      }
+
       await codeStep.save()
       return res.status(200).json({
         step: codeStep,
@@ -56,15 +64,23 @@ class CodeController {
 
   async checkCode(req, res) {
     try {
-      const { code, language } = req.body
+      const { code, language, tests } = req.body
 
       if (code.includes('sudo')) {
         return res.status(403).json({ err: 'No word `sudo` in code!' })
       }
 
-      runner(code, { timeout: 1000, language }, (err, data) => {
-        return res.status(200).json({ ...data })
-      })
+      let isCodeValid = false
+
+      if (language === 'JavaScript') {
+        isCodeValid = await CodeService.runJSCode(code, tests)
+      }
+
+      if (language === 'Python') {
+        isCodeValid = await CodeService.runPyCode(code, tests)
+      }
+
+      return res.status(200).json({ isCodeValid })
     } catch (error) {
       consola.error(error)
       return res.status(500).json({ message: 'Error while processing code' })

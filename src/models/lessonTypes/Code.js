@@ -2,8 +2,11 @@ const { model, Schema, ObjectId } = require('mongoose')
 
 const Code = new Schema({
   lesson: { type: ObjectId, ref: 'Lesson' },
-  body: { type: String },
+  body: { type: String, default: '' },
+  language: { type: String, default: 'JavaScript' },
+  answer: { type: String, default: '' },
   score: { type: Number, default: 1 },
+  tests: [{ test: String, expected: String }],
   type: { type: String, default: 'code' },
 })
 
