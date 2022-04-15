@@ -1,0 +1,18 @@
+
+version: '3'
+
+services:
+  server:
+    image: algoritm211/lem-backend
+    command: npm run dev
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/app
+      - ./app/node_modules
+    ports:
+      - "5000:5000"
+    container_name: lem-backend
