@@ -26,9 +26,12 @@ class TextWithAnswerController {
   async update(req, res) {
     try {
       const { id } = req.params
-      const { body } = req.body
+      const { body, answer } = req.body
       const withAnswerStep = await TextWithAnswer.findOne({ _id: id })
       withAnswerStep.body = body
+      if (answer) {
+        withAnswerStep.answer = answer
+      }
       await withAnswerStep.save()
       return res.status(200).json({
         lesson: withAnswerStep,

@@ -47,6 +47,24 @@ class TestController {
     }
   }
 
+  async addUserAnswer(req, res) {
+    try {
+      const { id } = req.params
+      const { userAnswers } = req.body
+      const testStep = await Test.findOneAndUpdate(
+        { _id: id },
+        { userAnswers },
+        { new: true },
+      )
+      return res.status(200).json({
+        step: testStep,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not add user`s answer' })
+    }
+  }
+
   async getOne(req, res) {
     try {
       const { id } = req.params
