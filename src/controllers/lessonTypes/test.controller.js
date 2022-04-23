@@ -32,10 +32,10 @@ class TestController {
   async update(req, res) {
     try {
       const { id } = req.params
-      const { options, answers, question, type } = req.body
+      const { options, answers, question, type, score } = req.body
       const testStep = await Test.findOneAndUpdate(
         { _id: id },
-        { options, answers, question, type },
+        { options, answers, question, type, score },
         { new: true },
       )
       return res.status(200).json({
@@ -54,7 +54,7 @@ class TestController {
       const testStep = await Test.findOneAndUpdate(
         { _id: id },
         { userAnswers },
-        { new: true },
+        { new: true, upsert: true },
       )
       return res.status(200).json({
         step: testStep,
