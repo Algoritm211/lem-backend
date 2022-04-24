@@ -1,84 +1,66 @@
-const { customAlphabet } = require('nanoid')
-const { spawn } = require('child_process')
-const fs = require('fs')
-const consola = require('consola')
-
-const promiseFromChildProcess = (child) => {
-  return new Promise((resolve, reject) => {
-    child.stdout.on('data', resolve)
-    child.stderr.on('error', reject)
-    // eslint-disable-next-line prefer-promise-reject-errors
-    child.on('close', () => reject('EXEC ERROR'))
-  })
-}
+const axios = require('axios')
 
 
 class CodeService {
-  constructor() {
-    this.dirNameExec = __dirname
-    this.nanoid = customAlphabet('1234567890abcdef', 10)
-  }
+  async #runCode({ language, code, rawTests, logFunc }) {
+    let isCodeValid = true
+    let errorMsg = ''
+    const tests = `${logFunc}(${rawTests.map((testObj) => testObj.test).join(', ')})`
 
-  async runCodeWithTests({
-    code,
-    rawTests,
-    fileExt,
-    logWrapper,
-    commandForRun,
-  }) {
-    let codeValid = true
-    const fileName = `${this.nanoid()}.${fileExt}`
-    const tests = logWrapper(rawTests)
-    const content = `${code}\n\n${tests}`
-    this.makeFile(fileName, content)
-    try {
-      const child = spawn(commandForRun, [fileName], { cwd: this.dirNameExec, timeout: 1200 })
-      const runDataRaw = await promiseFromChildProcess(child)
-      const resultsFromBuff = fileExt === 'js' ?
-        Buffer.from(runDataRaw).toString().split(' ').map((elem) => elem.replace('\n', '')) :
-        Buffer.from(runDataRaw).toString().split('\n').slice(0, -1)
+    const codeForRun = `${code}\n\n${tests}`
 
-      resultsFromBuff.forEach((num, index) => {
-        if (rawTests[index]?.expected !== num) {
-          codeValid = false
+    const programBody = {
+      script: codeForRun,
+      language,
+      versionIndex: '0',
+      clientId: process.env.JDOODLE_CLIENT_ID,
+      clientSecret: process.env.JDOODLE_CLIENT_SECRET,
+    }
+
+    const { data: execCodeData } = await axios.post('https://api.jdoodle.com/v1/execute', programBody)
+
+    if (execCodeData.output.includes('Error') ||
+      execCodeData.output.includes('error') ||
+      execCodeData.output.includes('__dirName')) {
+      errorMsg = execCodeData.output
+    }
+
+    const results = execCodeData.output.split(' ').map((elem) => elem.replace('\n', ''))
+
+    results.forEach((res, index) => {
+      if (rawTests[index]?.expected !== res) {
+        if (!errorMsg) {
+          errorMsg += `Wrong output for ${rawTests[index]?.test}\n`
         }
-      })
-      return codeValid
-    } catch (error) {
-      throw new Error(error)
-    } finally {
-      fs.rmSync(`${this.dirNameExec}/${fileName}`)
+        isCodeValid = false
+      }
+    })
+
+    return {
+      isValid: isCodeValid,
+      statusCode: execCodeData.statusCode,
+      memory: execCodeData.memory,
+      cpuTime: execCodeData.cpuTime,
+      errorMessage: errorMsg,
     }
   }
 
-  runPyCode(code, rawTests) {
-    return this.runCodeWithTests({
+  runPythonCode(code, rawTests) {
+    return this.#runCode({
       code,
       rawTests,
-      fileExt: 'py',
-      logWrapper: (tests) => tests
-        .map((testObj) => `print(${testObj.test})\n`)
-        .join(''),
-      commandForRun: 'python3',
+      language: 'python3',
+      logFunc: 'print',
     })
   }
 
   runJSCode(code, rawTests) {
-    return this.runCodeWithTests({
+    return this.#runCode({
       code,
       rawTests,
-      fileExt: 'js',
-      logWrapper: (tests) => `console.log(${tests.map((testObj) => testObj.test).join(', ')})`,
-      commandForRun: 'node',
+      language: 'nodejs',
+      logFunc: 'console.log',
     })
-  }
-
-  makeFile(fileName, content) {
-    try {
-      fs.writeFileSync(`${this.dirNameExec}/${fileName}`, content)
-    } catch (error) {
-      consola.error('Error while creating file')
-    }
   }
 }
 

@@ -70,17 +70,17 @@ class CodeController {
         return res.status(403).json({ err: 'No word `sudo` in code!' })
       }
 
-      let isCodeValid = false
-
-      if (language === 'JavaScript') {
-        isCodeValid = await CodeService.runJSCode(code, tests)
+      if (language === 'nodejs') {
+        const data = await CodeService.runJSCode(code, tests)
+        return res.status(200).json({ ...data })
       }
 
-      if (language === 'Python') {
-        isCodeValid = await CodeService.runPyCode(code, tests)
+      if (language === 'python3') {
+        const data = await CodeService.runPythonCode(code, tests)
+        return res.status(200).json({ ...data })
       }
 
-      return res.status(200).json({ isCodeValid })
+      return res.status(200).json({ message: 'This language is not available' })
     } catch (error) {
       consola.error(error)
       return res.status(500).json({ message: 'Error while processing code' })
