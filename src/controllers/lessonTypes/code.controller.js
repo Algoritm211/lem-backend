@@ -29,11 +29,14 @@ class CodeController {
       const { id } = req.params
       const { body, score, language, tests, answer } = req.body
       const codeStep = await Code.findOne({ _id: id })
-      if (body && score && tests) {
-        codeStep.body = body
+      if (score && tests) {
         codeStep.score = score
         codeStep.tests = tests
         codeStep.language = language
+      }
+
+      if (body) {
+        codeStep.body = body
       }
 
       if (answer) {
