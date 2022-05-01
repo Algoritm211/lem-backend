@@ -27,7 +27,7 @@ class CodeController {
   async update(req, res) {
     try {
       const { id } = req.params
-      const { body, score, language, tests, answer } = req.body
+      const { body, score, language, tests, code, answer } = req.body
       const codeStep = await Code.findOne({ _id: id })
       if (score && tests) {
         codeStep.score = score
@@ -37,6 +37,10 @@ class CodeController {
 
       if (body) {
         codeStep.body = body
+      }
+
+      if (code) {
+        codeStep.code = code
       }
 
       if (answer) {
