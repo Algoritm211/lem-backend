@@ -7,6 +7,22 @@ class AnswerController {
     try {
       const { text, score, stepType, stepId: step, userId: user } = req.body
 
+      const answer = await Answer.findOne({ step: step, user: user })
+
+      if (answer) {
+        answer.set({
+          text,
+          score,
+        })
+        await answer.save()
+        return res.status(201).json({
+          answer: answer,
+          message: 'Answer updated successfully',
+        })
+      }
+
+      // If answer not exists
+
       const newAnswer = new Answer({
         text: text || '',
         score: score || 0,
@@ -16,6 +32,7 @@ class AnswerController {
       })
 
       await newAnswer.save()
+
       return res.status(201).json({
         answer: newAnswer,
         message: 'Answer created successfully',
