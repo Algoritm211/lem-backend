@@ -43,6 +43,21 @@ class AnswerController {
     }
   }
 
+  async getAnswer(req, res) {
+    try {
+      const { stepId: step } = req.params
+      const { user } = req
+
+      const answer = await Answer.findOne({ step, user: user.id })
+      return res.status(200).json({
+        answer: answer,
+      })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not get answer' })
+    }
+  }
+
   async getAnswersByCourse(req, res) {
     try {
       const { courseId } = req.params
