@@ -6,5 +6,6 @@ const authMiddleware = require('../../middlewares/auth.middleware')
 router.post('/create/:lessonId', authMiddleware, TextController.create)
 router.patch('/update/:id', authMiddleware, TextController.update)
 router.get('/:id', TextController.getOne)
+router.delete('/delete/:id', TextController.delete)
 
 module.exports = router

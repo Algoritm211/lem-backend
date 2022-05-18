@@ -39,6 +39,22 @@ class TextController {
     }
   }
 
+  async delete(req, res) {
+    try {
+      const { id } = req.params
+      const step = await Text.findOne({ _id: id })
+      const lesson = await Lesson.findOne({ _id: step.lesson })
+      lesson.steps = lesson.steps.filter((item) => item.stepId.toString() !== id.toString())
+      await lesson.save()
+      await step.deleteOne()
+      return res.status(200).json({ lessonData: lesson })
+    } catch (error) {
+      consola.error(error)
+      return res.status(500).json({ message: 'Can not delete step' })
+    }
+  }
+
+
   async getOne(req, res) {
     try {
       const { id } = req.params
@@ -52,7 +68,6 @@ class TextController {
     }
   }
 }
-
 
 module.exports = new TextController()
 
