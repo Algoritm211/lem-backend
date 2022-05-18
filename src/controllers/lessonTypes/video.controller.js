@@ -1,7 +1,6 @@
 const Lesson = require('../../models/Lesson')
 const Video = require('../../models/lessonTypes/Video')
 const consola = require('consola')
-const Text = require('../../models/lessonTypes/Text')
 
 class VideoController {
   async create(req, res) {
