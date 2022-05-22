@@ -48,7 +48,7 @@ class AnswerController {
       const { stepId: step } = req.params
       const { user } = req
 
-      const answer = await Answer.findOne({ step, user: user.id })
+      const answer = await Answer.findOne({ step, user: user._id })
       return res.status(200).json({
         answer: answer,
       })
